@@ -17,8 +17,7 @@ uni-01 서브넷에 라우팅테이블을 연결해주어 퍼블릭 서브넷이
 <실습 4-1 : Intelij에서 원격접속>
 
 <실습 5 : NGINX 설치>
+
 sudo apt update
 sudo apt upgrade -y
 sudo apt install nginx -y
-
-

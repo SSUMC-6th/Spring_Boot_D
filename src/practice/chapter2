@@ -1,0 +1,23 @@
+<실습 1>
+UMC-6th-uni VPC 생성
+uni-01 서브넷 생성
+internet gateway 생성 후 생성한 VPC에 연결
+외부아이피 대역(0.0.0.0/0) 이 목적지일때, 인터넷 게이트웨이로 나갈 수있도록 라우팅테이블 설정
+uni-01 서브넷에 라우팅테이블을 연결해주어 퍼블릭 서브넷이 됨.
+
+<실습 2>
+보안그룹 Uni-Security 생성 후, 인바운드 규칙 설정 후 생성한 VPC에 연결
+
+<실습 3>
+우분투로 EC2 생성 후, 생성한 VPC의 서브넷에 연결, 보안그룹도 연결.
+
+<실습 4>
+탄력적 IP주소 할당
+
+<실습 4-1 : Intelij에서 원격접속>
+
+<실습 5 : NGINX 설치>
+
+sudo apt update
+sudo apt upgrade -y
+sudo apt install nginx -y

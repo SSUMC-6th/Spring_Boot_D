@@ -1,0 +1,20 @@
+2. /mission3에 접속 시 자신의 닉네임이 포함 된 HTML 문서가 응답으로 오게 구성
+
+- /etc/nginx/sites-available/default 블록 설정 코드
+location /mission3 {
+  root /var/www;
+  index uni.html; 
+  try_files $uri $uri/ =404;
+}
+
+- /var/www/mission3/uni.html 파일 설정코드
+<h1> hello uni! </h1>
+
+3. /was에 접속 시 8080번 포트로 리버스 프록시가 되도록 설정하고 해당 설정 코드와 502 응답이 화면에 응답으로 온 것을 인증
+
+- /etc/nginx/sites-available/default 블록 설정 코드
+
+location /was {
+  proxy_pass http://localhost:8080;
+  try_files $uri $uri/ =404;
+}

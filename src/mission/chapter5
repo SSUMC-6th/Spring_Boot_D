@@ -1,0 +1,37 @@
+<진행완료 미션>
+select m.status, m.reward, m.content, s.name
+from my_mission as mm
+inner join mission as m on mm.id = m.id
+inner join store as s on m.store_id = s.id
+where mm.user_id = 1 and mm.status = “complete” and mm.complete <
+(select complete from mm where id = 3)
+order by mm.complete desc limit 15;
+
+<진행중 미션>
+select m.status, m.reward, m.content, s.name
+from my_mission as mm
+inner join mission as m on mm.id = m.id
+inner join store as s on m.store_id = s.id
+where mm.user_id = 1 and mm.status = “in_progress” and mm.created_at <
+(select created_at from mm where id = 3)
+order by mm.created_at desc limit 15;
+
+
+<리뷰 작성>
+insert into review (user_id, store_id, score, content)
+values (1,1,5,’…’)
+
+<홈화면>
+select r.name, u.mission_count, s.name, m.*
+from mission as m
+join store as s on m.store_id = s.id
+join region as r on s.region_id = r.id
+where r.id = (select region_id from user as u where u.id = 1) and m.created_at < (select created_at from m where id = 3)
+order by m.created_at desc
+limit 15;
+
+
+<마이 페이지>
+select *
+from user as u
+where u.id = 1

@@ -1,0 +1,49 @@
+### 1. 내가 진행중, 진행 완료한 미션을 모아서 보는 쿼리(페이징 포함)
+
+<user> : id
+<mission_request> : point, price, isSuccess
+<store> : name
+
+select u.id, m.point, m.price, m.isSuccess, s.name
+from user as u 
+join mission_request as m on u.id = user_id 
+join store as s on s.id = user_id
+where m.isSuccess = 1 and m.created_at <
+(select created_at from m where id = 1)
+order by m.created_at desc limit 10;
+
+### 2. 리뷰작성하는 쿼리 (사진 배제)
+
+<user> : id(join속성), name
+<review> : user_id(join속성), detail, star
+
+select u.name, r.detail, r.star, r.created_at
+from user as u 
+join review as r on u.id = r.user_id;
+
+### 3. 홈 화면 쿼리( 페이징 포함)
+
+<user> : id(join속성), address
+<mission_request> : user_id(join속성), store_id(join속성), point, price, isSuccess, deadline
+<store> : id(join속성), address(where절 조건), name
+
+select u.address, m.point, m.price, m.deadline, s.name
+from user as u 
+join mission_request as m on u.id = m.user_id 
+join store as s on m.store_id = s.id
+where m.isSuccess = 0 and u.address = s.address and m.deadline not in
+(select deadline
+from mission_request
+where deadline = 0)
+and m.created_at <
+(select created_at
+from m
+where id = 1)
+order by m.created_at desc limit 10;
+
+### 4. 마이 페이지 화면 쿼리
+
+<user> : id로 모든정보 파악가능
+
+select *
+from user u

@@ -27,11 +27,11 @@ Ex.
 SELECT STUDENT.NAME, PROFESSOR.NAME 
 FROM STUDENT LEFT OUTER JOIN PROFESSOR -- STUDENT를 기준으로 왼쪽 조인
 ON STUDENT.PID = PROFESSOR.ID 
-WHERE GRADE = 1
+WHERE GRADE = 1  
 
 ```
 - 2️⃣ RIGHT OUTER JOIN: 오른쪽 테이블의 모든 값이 출력되는 조인
-- 3️⃣ FULL OUTER JOIN: 왼쪽 또는 오른쪽 테이블의 모든 값이 출력되는 조인
+- 3️⃣ FULL OUTER JOIN:  왼쪽 또는 오른쪽 테이블의 모든 값이 출력되는 조인
 
 
 

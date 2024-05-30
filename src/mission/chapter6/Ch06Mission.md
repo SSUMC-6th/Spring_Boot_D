@@ -18,7 +18,7 @@ GET /api/home
 ```
 POST api/review/{store-id}/upload
 ```
-
+-> store-id 말고 review-id 를 통해 해결하는 것도 괜찮을지도?
 
 - Request Body
 ```
@@ -29,6 +29,8 @@ POST api/review/{store-id}/upload
     "image" : "음식사진.png"
 }
 ```
+
+-> 이미지는 나중에 공부하겠찌만, 따로 빼서 정리한다?
 
 - Request Header
 
@@ -127,5 +129,7 @@ POST /api/members/signup/prefer-food
 - Request Header
 
 ```
-Authorization : accessToken (String)
+Authorization : accessToken (String) -> 로그인할 때 사용!
 ```
+
+-> 서블렛, 웹플럭스에 관해 좀 더 공부해보기!

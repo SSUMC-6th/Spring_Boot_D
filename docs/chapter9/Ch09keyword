@@ -1,0 +1,18 @@
+-error vs exception
+	- error: 코드로 수습될 수 없는 심각한 오류
+	- exception: 코드에 의해서 수습될 수 있는 미약한 오류
+-자바의 모든 예외는 Exception 클래스에서 처리함
+-IOExeption & FileNotFoundException => Complie시 예외 발생
+	- FileNotFoundException : 존재하지 않는 파일 이름 입력
+	- ClassNotFoundException : 클래스 이름 잘못 기재
+	- DataFormatException : 데이터 형식 잘못됨
+-RuntimeException => 런타임시 발생하는 예외
+	- IndexOutOfBoundsException : 배열 범위 벗어남
+	- NullPointerException : null 값 참조 변수의 멤버를 호출
+	- ClassCastException : 클래스 간의 형 변환 오류
+	- ArithmeticException : 정수를 0으로 나누는 산술 오류
+	- NumberFormatException : 정수가 아닌 문자열을 정수로 변환할 때
+	- ClassCastException : 상속, 구현 관계 아니면 클래스는 다른 클래스로 타입을 변환할 수 없는데, 이 규칙을 무시
+	- InputMismatchException : 의도치 않는 입력 오류 시 발생하는 예외
+
+-@ Valid : request body 검증시 사용, NotNull, NotBlank 등의 유효성 검사시 사용!

@@ -6,3 +6,10 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+<<<<<<< HEAD
+misc.xml
+modules.xml
+study.iml
+vcs.xml
+=======
+>>>>>>> 7229bd96ae550ab06317d7c9bb15272c585c517a

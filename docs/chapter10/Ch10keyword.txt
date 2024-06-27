@@ -1,0 +1,33 @@
+[Spring Data JPA의 Paging]
+데이터를 조회할 때, 수많은 데이터를 모두 한번에 조회하여 제공하면 서버의 부하가 큼
+-> 따라서 데이터를 일정 길이로 잘라서 일부만 사용자에게 제공하는 방식을 사용!
+Pageable : Spring Data에서 제공하는 페이지네이션 정보를 담기위한 인터페이스
+PageRequest : Pageable의 구현체
+
+<Page와 Slice>
+Spring Data JPA 레포지토리에 Pageable을 전달
+->Page 혹은 Slice를 반환!
+
+-두 인터페이스 모두 페이지네이션을 통한 조회 결과를 저장하는 역할을 하며, Page는 Slice를 상속받음
+-차이점은 count 쿼리 실행 유무
+
+<Page>
+: count 쿼리를 실행!
+: 전체 데이터 개수와 전체 페이지 개수 계산 가능!
+: 흔한 페이지네이션에 사용
+
+<Slice>
+: 별도로 count 쿼리 실행 xx
+: 무한 스크롤 구현시에는 페이지 유무만 판단하면 되기에 Slice가 적합
+cf) Spring Data JPA는 전달된 페이지 사이즈에 1을 더한 값으로 쿼리를 실행하기에 count를 하지 않고도 다음 페이지가 존재하는지 확인할 수 있음!
+
+[객체 그래프 탐색]
+: 객체 A가 참조하는 다른 객체 B, C, D 등을 A를 통해 참조하는 것
+: 참조를 사용해서 연관관계를 탐색하는 것
+JPA는 연관된 객체를 사용하는 시점에 적절한 SELECT SQL을 실행하기에 객체 그래프 탐색이 자유롭게 가능함 (이렇게 실제 사용 시점까지 데이터베이스 조회를 미루는 것 : 지연 로딩)
+
+[JPQL]
+-JPA의 Query 메서드만으로는 조회가 불가능한 경우, JPQL을 이용하여 직접 쿼리를 작성해서 조회가 가능!
+-@Query 혹은 EntityManager.createQuery 사용
+-SQL 문법과 유사 (SELECT, FROM, WHERE, GROUP BY, HAVING, JOIN 등 지원)
+cf)다만 쿼리작성이  문자열 형태고,컴파일 단계에서 타입체크가 불가능 하다는 단점이 있음 -> 이를 보완한 query DSL은 정적 타입을 이용해서 쿼리문을 코드로 작성할 수 있음

@@ -1,0 +1,61 @@
+무중단 CI/CD 파이프라인 구축 과정 정리
+
+개발 인프라 / 릴리즈 인프라(돈 때문에 프로젝트 후반부에 구축)
+
+따로 분리해야 지속적으로 개발할 수 있다.
+develop브랜치에 머지가 되면 CI/CD가 돌게 하자.
+release도 마찬가지!
+
+- GitHub Action : GUI기반으로도 만들수 있다.
+
+** 꼭 루트 디렉토리(프로젝트 폴더 바로 하단)에 폴더들을 만들어줘야 깃허브에서 이 파일들을 인식할수 있음!
+Job내부의 각 Step으로 동작을 실행함.
+깃허브가 자체적으로 리눅스 가상 환경을 만들어서 배포에 필요한 빌드 과정을 진행.
+
+빌드 과정을 진행한다
+ 1. .github폴더 생성 후 아래에 workflows폴더 생성 후 설정 .yml파일 만들기
+ 2. .ebextensions 폴더 생성, 아래에 .config 파일 생성(파일들은 00(make파일), 01, 02 순으로 맨 앞에 이름설정해줘야한다. EB가 WAS 만들때 이 숫자에 따라 차례대로 적용하기 때문
+ 3. Procfile 생성
+ 4. .platform 폴더 생성
+EB생성할때 기본 값으로 프록시 서버를 nginx로 설정되어 있기 때문에 nginx에 대한 설정을 해준다. (proxy_pass http://springboot; 로 리버스 프록시 설정)
++ nginx에서 S3로 파일(multipart)을 업로드하면 기본적으로 1MB로 크기 제한을 한다. 제한을 늘려주기위해 따로 설정 파일을 만들자. 이때 스프링부트 자체적인 .yml파일도 같이 수정해줘야한다.
+ 5. build.gradle 설정
+    jar {
+	    enabled = false
+    }
+ 6. 생성된 환경, 애플리케이션 이름 .github폴더의 설정파일에서 바꾸기
+
+- 서버 설정
+ 1. VPC 생성(10.0.0.0/16)
+ 2. 서브넷 생성(public 2개, private 2개 생성)
+    4개를 생성하는 이유는 RDS를 생성할때와 마찬가지로 보조?(가용성을 중시하는 aws) 하는 서버를 하나 놔둬야하는 AWS의 규칙때문이다.
+    가용 영역을 선택할때는 우리는 무료 서비스인 t2micro와 같은 것에 대해서는 b가 작동하지 않는 경우가 있다고한다. 따라서 a, c를 할당하자.
+ 3. 인터넷게이트 웨이 생성 후 라우팅 테이블 생성 아웃바운드로 인터넷게이트웨이 설정
+ 4. 라우팅 테이블에 public 서브넷 2개 연결
+ 5. 보안그룹 생성 및 인바운드 규칙 설정(SSH, HTTP, HTTPS, 8080포트, MYSQL/Aurora, 6379)
+ 6. 기존 진행했던 깃 레포지토리에 적용
+
+- Elastic BeanStalk(EB)
+
+**DB의 경우 따로 관리한다. 배포환경을 웹서버로 하기 때문에 기본적으로 배포할 EC2안에 웹서버가 들어간다.
+그렇다면 배포된 웹서버가 잘 동작하는지 어떻게 확인? GET요청으로 응답이오는지 확인! 이를 health check라고함. 
+1. IAM으로 사용자 만들기(역할 생성)
+  1-1. ELB자체 권한
+    AWSElasticBeanstalkEnhancedHealth, AWSElasticBeanstalkManagedUpdatesCustomerRolePolicy 권한설정
+    위와 같이 두가지 권한을 설정했을 경우 신뢰 관계에 EC2만 있어서 EB는 신뢰 관계가 없으므로 설정.(만들고 편집으로 수정해줘야함)
+  1-2. ELB가 만든 EC2권한
+    AWSElasticBeanstalkMulticontainerDocker, AWSElasticBeanstalkWebTier, AWSElasticBeanstalkWorkerTier 권한설정
+ 2. 생성할때 사전 설정으로 무중단 CI/CD를 위해서 단일 인스턴스가 아닌 사용자 지정 구성 선택
+ 3. EC2에 원격접속할때 사용했던 키 페어 사용
+ 4. 만들어둔 VPC 설정
+ 5. **EB는 EC2를 생성한다. 이때 EC2가 잘 만들어졌는지 확인해야하는데 이를 위해선 둘간의 네트워크 통신이 필요하다. -> EC2에 퍼블릭 IP주소를 할당해줘야한다.
+ 6. 만든 EB 보안그룹을 설정 후, 환경 유형을 밸런싱된 로드로 변경(무중단 배포를 위해 하나의 배포를 위해 최소 1개 최대 2개로 인스턴스 설정)
+ 7. 인스턴스 유형은 t3.small은 과금 되는것이어서 빼주기
+ 8. 프로세스에서 health check를 위해 상태 확인 경로 변경(API 구현해야함)
+ 9. 관리형 업데이트는 해제(우리는 브랜치가 merge 될때 배포되게 하므로)
+ 10. 애플리케이션 배포 정책을 추가 배치를 사용한 롤링으로 변경하여 무중단 배포 실현
+ 11. 환경속성 추가
+EB의 로드밸런서 : EB의 WAS가 5000번 포트에 있다고 알려줌(default) -> 우리가 따로 설정해서 알려줘야함. 8080포트로 
+ 12. SpringBoot나 Github처럼 aws외부에서 aws의 ELB에 요청하는 권한을 얻기 위해 사용자 추가 + AdministratorAccess-AWSElasticBeanstalk 권한 부여
+ 13. 추가된 사용자의 액세스 키 생성, 생성된 액세스 키, 비밀 액세스 키를 깃허브 설정 -> secrets and variables -> actions -> New repository secret으로 둘다 설정(.github폴더에 있는 .yml파일에 있는 환경변수 값과 일치)
+

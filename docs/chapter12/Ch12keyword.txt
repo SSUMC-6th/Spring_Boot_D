@@ -1,0 +1,19 @@
+- S3
+Simple Storage Service의 약자이다.
+주로 미디어 파일을 cloud에 쉽게 저장하기 위해 사용한다. 분산 저장을 지원하므로 특정 VPC에 할당되지 않는다. 따라서 EC2가 private으로 설정되어 있다면 VPC EndPoint로 퍼블릭 서브넷과 연결해줘야 하는데, 비용이 많이 들어가므로 우리가 호스팅할 EC2를 퍼블릭으로 설정해야한다.
+
+- MIME Type
+Multipurpose Internet Mail Extensions의 약자, 파일의 변환을 의미한다.
+이때까지 스프링으로 학습했던 DTO로 Request와 Response를 주고받았던것은 전부 apllication/json 타입의 형식이었다. 가장 많이 사용하는 3가지 유형을 살펴보자.
+1. application/json : json의 요청/응답이 올때 사용한다. 가장 많이 사용한다.
+2. application/x-www-form-urlencoded : form 의 데이터를 전송할 때 input의 값을 "key=value&key=value" 형식으로 만들어준다.
+3. multipart/form-data : 데이터에 파일이 첨부 될 수 있다. 파일은 여러가지가 있겠지만 이번주차의 학습내용에서 사진(이미지)파일이 해당한다고 볼수있다.
+
+- MultipartFile
+ 서로 붙어있는 여러 개의 메세지를 포함하여 하나의 복합 메세지로 보내진다.
+MIME multipart 메세지는 “Content-type:” 헤더에 boundary 파라미터를 포함함.
+boundary는 메세지 파트를 구분하는 역할을 하며, 메세지의 시작과 끝 부분도 나타낸다.
+첫번째 Boundary 전에 나오는 내용은 MIME을 지원하지 않는 클라이언트를 위해 제공된다.
+boundary 를 선택하는 것은 클라이언트의 몫이다. 보통 무작위의 문자를 선택해 메세지의 본문과 충돌을 피함. Ex) UUID
+HTTP form을 채워서 제출하면, 가변 길이 텍스트 필드와 업로드 될 객체는 각각 멀티파트 본문을 구성하는 하나의 파트가 되어 보내진다. 멀티 파트 분몬은 여러 다른 종류와 길이의 값으로 채워진 form을 허용함.
+** multipart/form-data: 사용자가 양식을 작성한 결과 값의 집합을 번들로 만드는데 사용한다.
